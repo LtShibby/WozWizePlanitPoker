@@ -13,7 +13,8 @@ const config: Config = {
         neon: "0 0 12px rgba(0,163,255,0.5)"
       },
       backgroundImage: {
-        scan: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.06), transparent 40%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)"
+        // Move the subtle highlight above the viewport and reduce intensity to avoid visible white haze
+        scan: "radial-gradient(circle at 50% -25%, rgba(255,255,255,0.02), transparent 35%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)"
       }
     }
   },

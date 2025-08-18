@@ -88,6 +88,19 @@ export default function RoomPage() {
   }, [roomCode]);
 
   const isHost = !!me && snap?.users.find(u=>u.id===me.id)?.isHost;
+  function shareInvite() {
+    const url = `${window.location.origin}/join?code=${roomCode}`;
+    const text = `Join my Planit Poker room: ${roomCode}`;
+    if (navigator.share) {
+      navigator.share({ title: "Planit Poker Room", text, url }).catch(() => {
+        navigator.clipboard?.writeText(url).then(()=>alert("Invite link copied"))
+          .catch(()=> window.prompt("Copy this invite link", url));
+      });
+    } else {
+      navigator.clipboard?.writeText(url).then(()=>alert("Invite link copied"))
+        .catch(()=> window.prompt("Copy this invite link", url));
+    }
+  }
   const seats = useMemo(()=> {
     const n = Math.max(2, Math.min(10, snap?.users.length ?? 0) || 2);
     const arr = new Array(n).fill(null) as Array<User|null>;
@@ -169,6 +182,7 @@ export default function RoomPage() {
       <header className="flex items-center justify-between mb-3">
         <div className="text-sm opacity-70">Room <span className="font-mono">{roomCode}</span></div>
                  <div className="flex gap-2">
+           <button className="px-3 py-1 bg-white/10 border border-white/15 rounded" onClick={shareInvite}>Share</button>
            {isHost && (
             <>
               <button className="px-3 py-1 bg-primary/20 border border-primary/40 rounded" onClick={()=>sockRef.current?.emit("reveal")}>Reveal</button>
@@ -227,7 +241,6 @@ export default function RoomPage() {
             })}
             {/* Emoji projectiles */}
             {projectiles.map(p => <Projectile key={p.id} snap={snap} from={p.from} to={p.to} emoji={p.emoji} />)}
-            <div className="absolute left-4 bottom-4 text-xs opacity-50">Click a seat to target; then pick an emoji below.</div>
           </div>
 
           {/* Deck */}

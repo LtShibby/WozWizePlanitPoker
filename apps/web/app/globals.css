@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 :root { color-scheme: dark; }
-html, body, #__next { height: 100%; }
+html, body { height: 100%; }
 body { @apply bg-bg text-neutral-200 bg-scan bg-[length:100%_100%,2px_2px]; }
