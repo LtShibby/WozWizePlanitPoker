@@ -35,7 +35,7 @@ export default function AboutPage() {
       </div>
 
       {/* Content wrapper sits above watermark */}
-      <div className="relative z-10 grid gap-10">
+      <div className="relative z-10 grid lg:grid-cols-[1fr,320px] gap-10">
         <article className="space-y-8 max-w-3xl">
           <header className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
@@ -122,6 +122,51 @@ export default function AboutPage() {
             </p>
           </section>
         </article>
+
+        {/* Sidebar cards */}
+        <aside className="space-y-6 sticky top-20 self-start">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#0b0f14] to-[#0e1420] p-5 shadow-[0_0_30px_rgba(59,130,246,.12)]">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/images/wozwize-owl.png"
+                alt="WozWize Owl"
+                width={36}
+                height={36}
+                className="rounded"
+                priority
+              />
+              <div className="leading-tight">
+                <div className="font-semibold">Built by WozWize</div>
+                <a
+                  href="https://wozwize.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  wozwize.com
+                </a>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-zinc-400">
+              Our north star is <span className="font-medium">WIZE</span>:
+            </p>
+            <p>
+            <span className="text-sm ml-1">Wisdom, Impact, Zero&nbsp;Guessing, Execution.</span>
+            </p>
+            <p>       
+              <span className="text-sm ml-1">        
+                <a
+                    href="https://wozwize.com/about-us"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-400 hover:text-blue-300 underline"
+                  >
+                    Learn More About WozWize Core Values
+                </a>
+              </span>
+            </p>
+          </div>
+        </aside>
       </div>
     </main>
   );
