@@ -1,8 +1,8 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 
-export default function JoinPage() {
+function JoinPageContent() {
   const r = useRouter();
   const search = useSearchParams();
   const [code, setCode] = useState("");
@@ -41,6 +41,29 @@ export default function JoinPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function JoinPage() {
+  return (
+    <Suspense fallback={
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-lg mx-auto bg-black/40 border border-white/10 rounded-2xl p-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-white/10 rounded mb-4"></div>
+            <div className="space-y-3">
+              <div className="h-4 bg-white/10 rounded"></div>
+              <div className="h-10 bg-white/10 rounded"></div>
+              <div className="h-4 bg-white/10 rounded"></div>
+              <div className="h-10 bg-white/10 rounded"></div>
+              <div className="h-10 bg-white/10 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    }>
+      <JoinPageContent />
+    </Suspense>
   );
 }
 
