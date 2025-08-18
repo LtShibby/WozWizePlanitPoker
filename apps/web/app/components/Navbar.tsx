@@ -4,8 +4,16 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
+import type { Route } from "next";
 
-function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
+type NavLinkProps = {
+  href: Route;
+  label: string;
+  isActive: boolean;
+  onClick?: () => void;
+};
+
+function NavLink({ href, label, isActive, onClick }: NavLinkProps) {
   return (
     <Link href={href} onClick={onClick} className="relative px-3 py-2 text-sm transition-colors hover:text-white group">
       {label}
@@ -87,11 +95,11 @@ export default function Navbar() {
   }, [open]);
 
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/create", label: "Create Room" },
-    { href: "/join", label: "Join Room" },
-    { href: "/about", label: "About Us" }
-  ];
+    { href: "/" as Route, label: "Home" },
+    { href: "/create" as Route, label: "Create Room" },
+    { href: "/join" as Route, label: "Join Room" },
+    { href: "/about" as Route, label: "About Us" }
+  ] satisfies ReadonlyArray<{ href: Route; label: string }>;
 
   return (
     <motion.header

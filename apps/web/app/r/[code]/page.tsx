@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 type User = { id: string; name: string; color: string; seatIndex: number; isHost: boolean; joinedAt: number; socketId: string; };
 type Round = { id: string; revealed: boolean; votes: Record<string, string|undefined> };
@@ -88,18 +89,27 @@ export default function RoomPage() {
   }, [roomCode]);
 
   const isHost = !!me && snap?.users.find(u=>u.id===me.id)?.isHost;
+  const [showCopiedPopup, setShowCopiedPopup] = useState(false);
+  
   function shareInvite() {
     const url = `${window.location.origin}/join?code=${roomCode}`;
-    const text = `Join my Planit Poker room: ${roomCode}`;
-    if (navigator.share) {
-      navigator.share({ title: "Planit Poker Room", text, url }).catch(() => {
-        navigator.clipboard?.writeText(url).then(()=>alert("Invite link copied"))
-          .catch(()=> window.prompt("Copy this invite link", url));
-      });
-    } else {
-      navigator.clipboard?.writeText(url).then(()=>alert("Invite link copied"))
-        .catch(()=> window.prompt("Copy this invite link", url));
-    }
+    
+    // Try to copy to clipboard
+    navigator.clipboard?.writeText(url).then(() => {
+      setShowCopiedPopup(true);
+      setTimeout(() => setShowCopiedPopup(false), 3000); // Hide after 3 seconds
+    }).catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      setShowCopiedPopup(true);
+      setTimeout(() => setShowCopiedPopup(false), 3000);
+    });
   }
   const seats = useMemo(()=> {
     const n = Math.max(2, Math.min(10, snap?.users.length ?? 0) || 2);
@@ -173,30 +183,84 @@ export default function RoomPage() {
     const nums = vals.map(v => Number(v)).filter(n => Number.isFinite(n)).sort((a,b)=>a-b);
     if (!nums.length) return { min: "-", max: "-", median: "-", agree: "0%" };
     const median = nums.length % 2 ? nums[(nums.length-1)/2] : (nums[nums.length/2-1] + nums[nums.length/2]) / 2;
-    const agree = (new Set(vals)).size === 1 ? "100%" : Math.round((nums.length / seats.filter(Boolean).length) * 100) + "%";
-    return { min: String(nums[0]), max: String(nums[nums.length-1]), median: String(median), agree };
+     // Calculate agreement percentage based on unique vote values
+     const uniqueVotes = new Set(vals);
+     let agreePercentage = "0%";
+     
+     if (uniqueVotes.size === 1) {
+       // All votes are the same
+       agreePercentage = "100%";
+     } else if (uniqueVotes.size === 2) {
+       // Check if votes are close (within 1 point for Fibonacci sequence)
+       const voteArray = Array.from(uniqueVotes).map(Number).sort((a, b) => a - b);
+       const diff = voteArray[1] - voteArray[0];
+       
+       if (diff <= 1) {
+         // Votes are close, consider as agreement
+         agreePercentage = "75%";
+       } else {
+         // Votes are far apart
+         agreePercentage = "50%";
+       }
+     } else if (uniqueVotes.size === 3) {
+       agreePercentage = "33%";
+     } else {
+       agreePercentage = "25%";
+     }
+         return { min: String(nums[0]), max: String(nums[nums.length-1]), median: String(median), agree: agreePercentage };
   }
 
-  return (
-    <main className="min-h-screen p-4">
-      <header className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className="text-2xl font-bold font-heading text-blue-400">Room:</div>
-          <div className="text-3xl font-mono font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent tracking-wider">
-            {roomCode}
-          </div>
-        </div>
-                 <div className="flex gap-2">
-           <button className="px-3 py-1 bg-white/10 border border-white/15 rounded" onClick={shareInvite}>Share</button>
+     return (
+     <main className="min-h-screen p-4">
+       {/* Room Header with Host Controls */}
+       <header className="flex items-center justify-between mb-6">
+         {/* Centered Room Info and Share Button */}
+         <div className="flex-1"></div>
+         <div className="flex flex-col items-center gap-3">
+           <div className="flex items-center gap-3">
+             <div className="text-2xl font-bold font-heading text-blue-400">Room:</div>
+             <div className="text-3xl font-mono font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent tracking-wider">
+               {roomCode}
+             </div>
+           </div>
+           <div className="relative">
+             <button 
+               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-blue-400/30" 
+               onClick={shareInvite}
+             >
+               📤 Share Room
+             </button>
+             
+             {/* Copied popup positioned next to share button */}
+             {showCopiedPopup && (
+               <motion.div
+                 initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                 animate={{ opacity: 1, x: 0, scale: 1 }}
+                 exit={{ opacity: 0, x: -20, scale: 0.9 }}
+                 className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-2xl border border-green-400 whitespace-nowrap"
+               >
+                 <div className="flex items-center gap-2">
+                   <span className="text-sm">✅</span>
+                   <span className="font-medium text-sm">Copied! Now send it to your teammates!</span>
+                 </div>
+                 {/* Arrow pointing to button */}
+                 <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-l-4 border-l-green-500 border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+               </motion.div>
+             )}
+           </div>
+         </div>
+         
+         {/* Host Controls - Top Right */}
+         <div className="flex-1 flex justify-end">
            {isHost && (
-            <>
-              <button className="px-3 py-1 bg-primary/20 border border-primary/40 rounded" onClick={()=>sockRef.current?.emit("reveal")}>Reveal</button>
-              <button className="px-3 py-1 bg-white/10 border border-white/15 rounded" onClick={()=>sockRef.current?.emit("clearVotes")}>Clear</button>
-              <button className="px-3 py-1 bg-white/10 border border-white/15 rounded" onClick={()=>sockRef.current?.emit("newRound")}>New Round</button>
-            </>
-          )}
-        </div>
-      </header>
+             <div className="flex gap-2">
+               <button className="px-3 py-1 bg-primary/20 border border-primary/40 rounded hover:bg-primary/30 transition-colors" onClick={()=>sockRef.current?.emit("reveal")}>Reveal</button>
+               <button className="px-3 py-1 bg-white/10 border border-white/15 rounded hover:bg-white/20 transition-colors" onClick={()=>sockRef.current?.emit("clearVotes")}>Clear</button>
+               <button className="px-3 py-1 bg-white/10 border border-white/15 rounded hover:bg-white/20 transition-colors" onClick={()=>sockRef.current?.emit("newRound")}>New Round</button>
+             </div>
+           )}
+         </div>
+       </header>
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-4">
                  {/* Table */}
@@ -211,20 +275,33 @@ export default function RoomPage() {
                                      <div
                      onClick={()=> u && setThrowTarget(u.id)}
                      className={`w-28 -ml-14 -mt-12 text-center cursor-pointer select-none ${throwTarget===u?.id ? "ring-2 ring-accent" : ""}`}>
-                     <div className={`relative w-16 h-16 rounded-full mx-auto mb-1 transition-all duration-300 ${u && snap?.round.votes[u.id] ? "ring-2 ring-green-400 scale-110" : ""}`} style={{ background: u ? u.color : "#333" }}>
-                       {/* Vote display inside circle */}
-                       {u && snap?.round.votes[u.id] && (
-                         <div className="absolute inset-0 flex items-center justify-center">
-                           {snap.round.revealed ? (
-                             <span className={`text-lg font-bold ${getVoteDisplayClass(snap.round.votes[u.id], snap.round)}`}>
-                               {snap.round.votes[u.id]}
-                             </span>
-                           ) : (
-                             <span className="text-white text-sm">✓</span>
-                           )}
-                         </div>
-                       )}
-                     </div>
+                                           <div className={`relative w-16 h-16 rounded-full mx-auto mb-1 transition-all duration-300 ${u && snap?.round.votes[u.id] ? "ring-2 ring-green-400 scale-110" : ""} overflow-hidden`}>
+                        {/* WozWize owl background */}
+                        {u && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Image 
+                              src="/images/wozwize-owl.png" 
+                              alt="WozWize Owl" 
+                              width={64} 
+                              height={64}
+                              className={`transition-opacity duration-300 ${snap?.round.revealed ? 'opacity-30' : 'opacity-100'}`}
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Vote display inside circle */}
+                        {u && snap?.round.votes[u.id] && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            {snap.round.revealed ? (
+                              <span className={`text-lg font-bold ${getVoteDisplayClass(snap.round.votes[u.id], snap.round)}`}>
+                                {snap.round.votes[u.id]}
+                              </span>
+                            ) : (
+                              <span className="text-white text-sm">✓</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                      <div className="text-xs truncate font-medium">{u?.name ?? "Waiting…"}</div>
                      <div className="text-[10px] opacity-60">
                         {u ? (
