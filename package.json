@@ -2,6 +2,7 @@
   "name": "wozwize-planit-poker",
   "private": true,
   "version": "1.0.0",
+  "packageManager": "npm@10.8.2",
   "workspaces": ["apps/*"],
   "scripts": {
     "dev": "npm-run-all -p dev:server dev:web",
