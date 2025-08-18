@@ -6,7 +6,10 @@ import { getOrCreateRoom, addUser, removeUser, vote, reveal, clearVotes, newRoun
 import { makeLimiter } from "./ratelimit.js";
 
 const PORT = Number(process.env.PORT ?? 8787);
-const ORIGIN = process.env.WEB_ORIGIN ?? "http://localhost:3000";
+const ORIGIN = process.env.WEB_ORIGIN ?? [
+  "http://localhost:3000",
+  "https://woz-wize-planit-poker-web.vercel.app"
+];
 
 const app = express();
 app.use(cors({ origin: ORIGIN }));

@@ -26,7 +26,7 @@ export default function RoomPage() {
 
      useEffect(()=> {
      const name = localStorage.getItem("pp_name") || "Guest";
-     const url = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:8787";
+     const url = process.env.NEXT_PUBLIC_SOCKET_URL || "https://wozwizeplanitpoker-production.up.railway.app";
     
     const s = io(url, { 
       path: "/rt", 
