@@ -180,7 +180,12 @@ export default function RoomPage() {
   return (
     <main className="min-h-screen p-4">
       <header className="flex items-center justify-between mb-3">
-        <div className="text-sm opacity-70">Room <span className="font-mono">{roomCode}</span></div>
+        <div className="flex items-center gap-3">
+          <div className="text-2xl font-bold font-heading text-blue-400">Room:</div>
+          <div className="text-3xl font-mono font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent tracking-wider">
+            {roomCode}
+          </div>
+        </div>
                  <div className="flex gap-2">
            <button className="px-3 py-1 bg-white/10 border border-white/15 rounded" onClick={shareInvite}>Share</button>
            {isHost && (

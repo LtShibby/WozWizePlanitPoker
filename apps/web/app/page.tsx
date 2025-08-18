@@ -51,7 +51,7 @@ export default function Page() {
       </section>
       
       <section className="w-full max-w-4xl mx-auto text-center px-4">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">Planit Poker - simple, no-login team estimation.</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight font-heading">Planit Poker - simple, no-login team estimation.</h1>
         <p className="text-base md:text-lg opacity-80 mb-6">Real-time pointing, emoji throws, and zero persistence — rooms auto-expire after a short idle.</p>
         <div className="flex items-center justify-center gap-3">
           <button onClick={()=>go(randCode())} className="px-5 py-3 rounded-md bg-blue-600 hover:bg-blue-500 transition text-white">Create a Room</button>
@@ -65,7 +65,7 @@ export default function Page() {
         <div className="grid gap-4 md:hidden">
           {features.map((f, i) => (
             <div key={i} className="rounded-2xl bg-white text-gray-900 border border-black/10 p-5 shadow-xl">
-              <h3 className="font-semibold mb-2">{f.title}</h3>
+              <h3 className="font-semibold mb-2 font-heading">{f.title}</h3>
               <p className="text-sm text-gray-700">
                 {f.body} {f.link && (<a className="underline" href={f.link} target="_blank" rel="noreferrer noopener">Learn more</a>)}
               </p>
@@ -115,7 +115,7 @@ export default function Page() {
               >
                 <div className={`w-52 md:w-56 h-72 rounded-2xl border p-5 shadow-2xl shadow-[0_0_30px_rgba(59,130,246,.12)] hover:shadow-[0_0_40px_rgba(59,130,246,.18)] transition-shadow ${i === 3 ? 'bg-gradient-to-b from-blue-600 to-blue-500 text-white border-blue-400' : 'bg-white text-gray-900 border-black/10'}`}>
                   <div className="h-1 w-10 bg-blue-500 rounded mb-3" />
-                  <h3 className="font-semibold mb-2">{f.title}</h3>
+                  <h3 className="font-semibold mb-2 font-heading">{f.title}</h3>
                   <p className={`text-sm ${i === 3 ? 'text-white/90' : 'text-gray-700'}`}>
                     {f.body} {f.link && (<a className={`underline ${i === 3 ? 'text-white hover:text-white/90' : ''}`} href={f.link} target="_blank" rel="noreferrer noopener">Learn more</a>)}
                   </p>
@@ -128,7 +128,7 @@ export default function Page() {
 
       <section className="w-full max-w-5xl mx-auto gap-6 px-4">
         <div className="w-full max-w-md mx-auto bg-[#0b0f14] border border-white/10 rounded-2xl p-6 relative z-10">
-          <h2 className="text-xl font-bold mb-2">Jump right in</h2>
+          <h2 className="text-xl font-bold mb-2 font-heading">Jump right in</h2>
           <p className="text-sm opacity-70 mb-6">Create a room or join an existing one by code.</p>
 
           <label className="block text-sm mb-2">Display Name</label>

@@ -3,13 +3,28 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 function NavLink({ href, label, isActive, onClick }: { href: string; label: string; isActive: boolean; onClick?: () => void }) {
-  const base = "px-3 py-2 rounded-md text-sm transition-colors";
-  const active = isActive ? "font-semibold border-b-2 border-blue-500" : "";
   return (
-    <Link href={href} onClick={onClick} className={`${base} ${active} hover:text-white`}>
+    <Link href={href} onClick={onClick} className="relative px-3 py-2 text-sm transition-colors hover:text-white group">
       {label}
+      {isActive && (
+        <motion.div
+          layoutId="navbar-underline"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500/30"
+        initial={{ scaleX: 0 }}
+        whileHover={{ scaleX: 1 }}
+        transition={{ duration: 0.2 }}
+        style={{ transformOrigin: "left" }}
+      />
     </Link>
   );
 }
@@ -19,6 +34,12 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const navbarRef = useRef<HTMLDivElement | null>(null);
+  
+  const { scrollY } = useScroll();
+  const navbarHeight = useTransform(scrollY, [0, 100], [56, 48]); // 56px to 48px
+  const navbarOpacity = useTransform(scrollY, [0, 50], [0.95, 0.98]);
+  const logoScale = useTransform(scrollY, [0, 100], [1, 0.9]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -73,46 +94,101 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#121821] bg-[#0b0f14] text-[#e6e6e6] shadow-[0_1px_0_rgba(0,0,0,0.1)]">
-      <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-14">
-        <Link href="/" className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
-          <Image src="/images/wozwize-owl.png" alt="WozWize" width={50} height={50} />
-          <span className="sr-only">Home</span>
+    <motion.header
+      ref={navbarRef}
+      style={{ height: navbarHeight, opacity: navbarOpacity }}
+      className="sticky top-0 z-50 backdrop-blur-xl bg-black/20 border-b border-white/10 shadow-2xl"
+    >
+      <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-full">
+        <Link href="/" className="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded transition-transform hover:scale-105">
+          <motion.div style={{ scale: logoScale }}>
+            <Image src="/images/wozwize-owl.png" alt="WozWize" width={50} height={50} />
+          </motion.div>
+          <span className="font-bold text-lg tracking-wide font-heading bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+            WOZWIZE PLANIT POKER
+          </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-2" role="navigation" aria-label="Primary">
+        <nav className="hidden md:flex items-center gap-1" role="navigation" aria-label="Primary">
           {links.map(l => (
             <NavLink key={l.href} href={l.href} label={l.label} isActive={pathname === l.href} />
           ))}
+          <motion.div
+            className="ml-4"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link 
+              href="/create" 
+              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:from-blue-500 hover:to-blue-400"
+            >
+              Get Started
+            </Link>
+          </motion.div>
         </nav>
 
         <button
           ref={buttonRef}
-          className="md:hidden inline-flex items-center justify-center rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="md:hidden inline-flex items-center justify-center rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors hover:bg-white/10"
           aria-label="Toggle menu"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen(v => !v)}
         >
-          <span className="block w-5 h-0.5 bg-current mb-1"></span>
-          <span className="block w-5 h-0.5 bg-current mb-1"></span>
-          <span className="block w-5 h-0.5 bg-current"></span>
+          <motion.div
+            animate={open ? "open" : "closed"}
+            className="flex flex-col items-center justify-center w-5 h-5"
+          >
+            <motion.span
+              variants={{
+                closed: { rotate: 0, y: 0 },
+                open: { rotate: 45, y: 6 }
+              }}
+              className="block w-5 h-0.5 bg-current mb-1 origin-center"
+            />
+            <motion.span
+              variants={{
+                closed: { opacity: 1 },
+                open: { opacity: 0 }
+              }}
+              className="block w-5 h-0.5 bg-current mb-1"
+            />
+            <motion.span
+              variants={{
+                closed: { rotate: 0, y: 0 },
+                open: { rotate: -45, y: -6 }
+              }}
+              className="block w-5 h-0.5 bg-current origin-center"
+            />
+          </motion.div>
         </button>
       </div>
 
-      <div
+      <motion.div
         id="mobile-nav"
         ref={menuRef}
-        className={`md:hidden border-t border-[#121821] bg-[#0b0f14] overflow-hidden transition-[max-height] duration-300 ease-out ${open ? "max-h-96" : "max-h-0"}`}
+        className="md:hidden border-t border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden"
+        initial={{ height: 0 }}
+        animate={{ height: open ? "auto" : 0 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
         aria-hidden={!open}
       >
-        <div className="px-4 py-2 flex flex-col" role="navigation" aria-label="Mobile">
+        <div className="px-4 py-2 flex flex-col space-y-1" role="navigation" aria-label="Mobile">
           {links.map(l => (
             <NavLink key={l.href} href={l.href} label={l.label} isActive={pathname === l.href} onClick={() => setOpen(false)} />
           ))}
+          <div className="pt-2">
+            <Link 
+              href="/create" 
+              className="block w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg font-medium text-center shadow-lg"
+              onClick={() => setOpen(false)}
+            >
+              Get Started
+            </Link>
+          </div>
         </div>
-      </div>
-    </header>
+      </motion.div>
+    </motion.header>
   );
 }
 

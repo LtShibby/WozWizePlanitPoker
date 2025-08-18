@@ -1,23 +1,21 @@
 import type { Config } from "tailwindcss";
-const config: Config = {
-  darkMode: "class",
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+
+export default {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
-      colors: {
-        bg: "#0A0A0B",
-        primary: "#00A3FF",
-        accent: "#FFD400"
-      },
-      boxShadow: {
-        neon: "0 0 12px rgba(0,163,255,0.5)"
+      fontFamily: {
+        'heading': ['Space Grotesk', 'sans-serif'],
+        'body': ['Inter', 'sans-serif'],
       },
       backgroundImage: {
-        // Move the subtle highlight above the viewport and reduce intensity to avoid visible white haze
-        scan: "radial-gradient(circle at 50% -25%, rgba(255,255,255,0.02), transparent 35%), linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)"
+        scan: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03), transparent 30%), linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px)"
       }
-    }
+    },
   },
-  plugins: []
-};
-export default config;
+  plugins: [],
+} satisfies Config;
