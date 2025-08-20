@@ -108,12 +108,6 @@ app.get("/", (_req, res) => {
             <div class="endpoint">WebSocket /rt - Real-time communication</div>
         </div>
 
-        <div class="info">
-            <h3>What's Next?</h3>
-            <p>Your frontend should connect to this server using the Socket.IO endpoint at <code>/rt</code>.</p>
-            <p>Make sure your frontend is configured to connect to: <strong>${process.env.NODE_ENV === 'production' ? 'https://' + process.env.RAILWAY_STATIC_URL?.replace('https://', '') : 'http://localhost:' + PORT}</strong></p>
-        </div>
-
         <div class="footer">
             <p>Built with ❤️ by <a href="https://wozwize.com" target="_blank">WozWize</a></p>
         </div>
