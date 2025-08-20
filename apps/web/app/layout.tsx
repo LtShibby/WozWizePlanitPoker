@@ -4,7 +4,7 @@ import Image from "next/image";
 import Navbar from "./components/Navbar";
 
 export const metadata = {
-  title: "WozWize PlanIt Poker",
+  title: "PlanIt Poker",
   description: "Ephemeral planning poker with emoji chaos. No database, no problem.",
   icons: {
     icon: "/images/wozwize-owl.png"

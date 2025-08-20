@@ -113,7 +113,7 @@ export default function Navbar() {
             <Image src="/images/wozwize-owl.png" alt="WozWize" width={50} height={50} />
           </motion.div>
           <span className="font-bold text-lg tracking-wide font-heading bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-            WOZWIZE PLANIT POKER
+            PLANIT POKER
           </span>
         </Link>
 
