@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 function randCode() {
@@ -54,13 +55,13 @@ export default function Page() {
         <h1 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight font-heading">Planit Poker - simple, no-login team estimation.</h1>
         <p className="text-base md:text-lg opacity-80 mb-6">Real-time pointing, emoji throws, and zero persistence — rooms auto-expire after a short idle.</p>
         <div className="flex items-center justify-center gap-3">
-          <button onClick={()=>go(randCode())} className="px-5 py-3 rounded-md bg-blue-600 hover:bg-blue-500 transition text-white">Create a Room</button>
-          <button onClick={()=>code && go(code)} className="px-5 py-3 rounded-md border border-white/20 hover:bg-white/10 transition">Join a Room</button>
+          <Link href="/create" className="px-5 py-3 rounded-md bg-blue-600 hover:bg-blue-500 transition text-white">Create a Room</Link>
+          <Link href="/join" className="px-5 py-3 rounded-md border border-white/20 hover:bg-white/10 transition">Join a Room</Link>
         </div>
       </section>
 
       {/* Feature cards: stacked on mobile; vertical poker hand with click-to-focus on desktop */}
-      <section className="w-full max-w-5xl mx-auto px-4 -mt-6 md:-mt-10 lg:-mt-12 mb-12 md:mb-16 relative z-10">
+      <section className="w-full max-w-5xl mx-auto px-4 -mt-6 md:-mt-10 lg:-mt-12 mb-12 md:mb-16 relative">
         {/* Mobile: simple stack */}
         <div className="grid gap-4 md:hidden">
           {features.map((f, i) => (
@@ -77,7 +78,7 @@ export default function Page() {
         <div
           className="hidden md:flex items-center justify-center relative
                     h-[16rem] lg:h-[18rem] xl:h-[20rem]
-                    -mt-10 md:-mt-14 xl:-mt-16 z-10 select-none"
+                    -mt-10 md:-mt-14 xl:-mt-16 select-none pointer-events-none"
           onClick={() => setActive(null)}
         >
           {features.map((f, i) => {
@@ -109,7 +110,7 @@ export default function Page() {
                 initial={false}
                 animate={{ x, y, rotate: r, scale, opacity }}
                 transition={{ type: "spring", stiffness: 260, damping: 22 }}
-                className="absolute top-[35%] left-[40%] -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                className="absolute top-[35%] left-[40%] -translate-x-1/2 -translate-y-1/2 cursor-pointer pointer-events-auto"
                 style={{ zIndex: z }}
                 onClick={(e) => { e.stopPropagation(); setActive(i === active ? null : i); }}
               >
